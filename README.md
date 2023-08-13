@@ -23,7 +23,7 @@ For "graphical" rendering try this shitty bash thing:
 ```bash
 $ clang++ --std=c++17 -c ttti.cc -DNQUEENS=N6 2>&1 | \
     grep -E 'static.*assert(ion)? failed' | \
-    sed -E 's/.*is_same_v<(.+), Nil>.*/\1/' | \
+    sed -E 's/.*IsSameType<(.+), Nil>.*/\1/' | \
     sed 's/, Cons/\n/g' | \
     sed -E 's/.*, ([S<]*)Z.*/\1#/g' | \
     tr -d 'S' | tr '<' ' '

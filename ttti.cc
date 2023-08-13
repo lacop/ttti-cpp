@@ -263,12 +263,21 @@ struct AddQueensIfWrap<False, N, X, Config> { using Res = Config; };
 template<typename N>
 using Solution = First<AddQueens<N, N0, Cons<Nil, Nil>>>;
 
-// We only use std::is_same_v for testing & output,
-// Otherwise no stdlib! That would make things too easy.
-#include <type_traits>
 
+// Avoid importing anything from stdlib (like type_traits),
+// make our own std::is_same_v instead. This is only used for
+// the final output and unit tests.
+template<typename A, typename B>
+struct IsSameHelper { static constexpr bool value = false; };
+template<typename A>
+struct IsSameHelper<A, A> { static constexpr bool value = true; };
+
+template<typename A, typename B>
+inline constexpr bool IsSameType = IsSameHelper<A, B>::value;
+
+// The output of our program :)
 #ifdef NQUEENS
-static_assert(std::is_same_v<Solution<NQUEENS>, Nil>);
+static_assert(IsSameType<Solution<NQUEENS>, Nil>);
 #endif
 
 // "Unit tests" 
@@ -280,151 +289,151 @@ namespace tests {
         using LA = Cons<A, Nil>;
         using LB = Cons<B, LA>;
         using LC = Cons<C, LB>;
-        static_assert(std::is_same_v<First<LA>, A>);
-        static_assert(std::is_same_v<First<LB>, B>);
-        static_assert(std::is_same_v<First<LC>, C>);
+        static_assert(IsSameType<First<LA>, A>);
+        static_assert(IsSameType<First<LB>, B>);
+        static_assert(IsSameType<First<LC>, C>);
 
-        static_assert(std::is_same_v<First<Next<LA>>, Nil>);
-        static_assert(std::is_same_v<First<Next<LB>>, A>);
-        static_assert(std::is_same_v<First<Next<LC>>, B>);
+        static_assert(IsSameType<First<Next<LA>>, Nil>);
+        static_assert(IsSameType<First<Next<LB>>, A>);
+        static_assert(IsSameType<First<Next<LC>>, B>);
         
         using LBC = Cons<B, Cons<C, Nil>>;
         using LABC = ListConcat<LA, LBC>;
-        static_assert(std::is_same_v<First<LABC>, A>);
-        static_assert(std::is_same_v<First<Next<LABC>>, B>);
-        static_assert(std::is_same_v<First<Next<Next<LABC>>>, C>);
-        static_assert(std::is_same_v<First<Next<Next<Next<LABC>>>>, Nil>);
+        static_assert(IsSameType<First<LABC>, A>);
+        static_assert(IsSameType<First<Next<LABC>>, B>);
+        static_assert(IsSameType<First<Next<Next<LABC>>>, C>);
+        static_assert(IsSameType<First<Next<Next<Next<LABC>>>>, Nil>);
         using LBCA = ListConcat<LBC, LA>;
-        static_assert(std::is_same_v<First<LBCA>, B>);
-        static_assert(std::is_same_v<First<Next<LBCA>>, C>);
-        static_assert(std::is_same_v<First<Next<Next<LBCA>>>, A>);
-        static_assert(std::is_same_v<First<Next<Next<Next<LBCA>>>>, Nil>);
+        static_assert(IsSameType<First<LBCA>, B>);
+        static_assert(IsSameType<First<Next<LBCA>>, C>);
+        static_assert(IsSameType<First<Next<Next<LBCA>>>, A>);
+        static_assert(IsSameType<First<Next<Next<Next<LBCA>>>>, Nil>);
 
         using LAB = Cons<A, Cons<B, Nil>>;
         // X = ( (A) (A B) (B C) )
         using X = Cons<LA, Cons<LAB, Cons<LBC, Nil>>>;
-        static_assert(std::is_same_v<First<First<X>>, A>);
-        static_assert(std::is_same_v<Next<First<X>>, Nil>);
-        static_assert(std::is_same_v<First<First<Next<X>>>, A>);
-        static_assert(std::is_same_v<First<Next<First<Next<X>>>>, B>);
+        static_assert(IsSameType<First<First<X>>, A>);
+        static_assert(IsSameType<Next<First<X>>, Nil>);
+        static_assert(IsSameType<First<First<Next<X>>>, A>);
+        static_assert(IsSameType<First<Next<First<Next<X>>>>, B>);
         // Y = (A A B B C)
         using Y = ListConcatAll<X>;
-        static_assert(std::is_same_v<First<Y>, A>);
-        static_assert(std::is_same_v<First<Next<Y>>, A>);
-        static_assert(std::is_same_v<First<Next<Next<Y>>>, B>);
-        static_assert(std::is_same_v<First<Next<Next<Next<Y>>>>, B>);
-        static_assert(std::is_same_v<First<Next<Next<Next<Next<Y>>>>>, C>);
-        static_assert(std::is_same_v<First<Next<Next<Next<Next<Next<Y>>>>>>, Nil>);
+        static_assert(IsSameType<First<Y>, A>);
+        static_assert(IsSameType<First<Next<Y>>, A>);
+        static_assert(IsSameType<First<Next<Next<Y>>>, B>);
+        static_assert(IsSameType<First<Next<Next<Next<Y>>>>, B>);
+        static_assert(IsSameType<First<Next<Next<Next<Next<Y>>>>>, C>);
+        static_assert(IsSameType<First<Next<Next<Next<Next<Next<Y>>>>>>, Nil>);
 
         using LRangeOne = Cons<N0, Nil>;
         using LRangeTwo = Cons<N1, LRangeOne>;
-        static_assert(std::is_same_v<Range<N0>, Nil>);
-        static_assert(std::is_same_v<Range<N1>, LRangeOne>);
-        static_assert(std::is_same_v<Range<N2>, LRangeTwo>);
+        static_assert(IsSameType<Range<N0>, Nil>);
+        static_assert(IsSameType<Range<N1>, LRangeOne>);
+        static_assert(IsSameType<Range<N2>, LRangeTwo>);
     }
     namespace bools {
-        static_assert(std::is_same_v<Not<True>, False>);
-        static_assert(std::is_same_v<Not<False>, True>);
+        static_assert(IsSameType<Not<True>, False>);
+        static_assert(IsSameType<Not<False>, True>);
         
-        static_assert(std::is_same_v<Or<False, False>, False>);
-        static_assert(std::is_same_v<Or<True, False>, True>);
-        static_assert(std::is_same_v<Or<False, True>, True>);
-        static_assert(std::is_same_v<Or<True, True>, True>);
+        static_assert(IsSameType<Or<False, False>, False>);
+        static_assert(IsSameType<Or<True, False>, True>);
+        static_assert(IsSameType<Or<False, True>, True>);
+        static_assert(IsSameType<Or<True, True>, True>);
     
         using LT = Cons<True, Nil>;
         using LF = Cons<False, Nil>;
         using LFT = Cons<False, Cons<True, Nil>>;
-        static_assert(std::is_same_v<AnyTrue<Nil>, False>);
-        static_assert(std::is_same_v<AnyTrue<LT>, True>);
-        static_assert(std::is_same_v<AnyTrue<LF>, False>);
-        static_assert(std::is_same_v<AnyTrue<LFT>, True>);
+        static_assert(IsSameType<AnyTrue<Nil>, False>);
+        static_assert(IsSameType<AnyTrue<LT>, True>);
+        static_assert(IsSameType<AnyTrue<LF>, False>);
+        static_assert(IsSameType<AnyTrue<LFT>, True>);
     }
     namespace peano {
-        static_assert(std::is_same_v<PeanoEqual<N0, N0>, True>);
-        static_assert(std::is_same_v<PeanoEqual<N1, N1>, True>);
-        static_assert(std::is_same_v<PeanoEqual<N1, N2>, False>);
-        static_assert(std::is_same_v<PeanoEqual<N8, N8>, True>);
-        static_assert(std::is_same_v<PeanoEqual<N6, N7>, False>);
+        static_assert(IsSameType<PeanoEqual<N0, N0>, True>);
+        static_assert(IsSameType<PeanoEqual<N1, N1>, True>);
+        static_assert(IsSameType<PeanoEqual<N1, N2>, False>);
+        static_assert(IsSameType<PeanoEqual<N8, N8>, True>);
+        static_assert(IsSameType<PeanoEqual<N6, N7>, False>);
 
-        static_assert(std::is_same_v<PeanoLT<N0, N0>, False>);
-        static_assert(std::is_same_v<PeanoLT<N0, N1>, True>);
-        static_assert(std::is_same_v<PeanoLT<N0, N2>, True>);
-        static_assert(std::is_same_v<PeanoLT<N1, N2>, True>);
-        static_assert(std::is_same_v<PeanoLT<N2, N2>, False>);
+        static_assert(IsSameType<PeanoLT<N0, N0>, False>);
+        static_assert(IsSameType<PeanoLT<N0, N1>, True>);
+        static_assert(IsSameType<PeanoLT<N0, N2>, True>);
+        static_assert(IsSameType<PeanoLT<N1, N2>, True>);
+        static_assert(IsSameType<PeanoLT<N2, N2>, False>);
         
-        static_assert(std::is_same_v<PeanoAbsDiff<N0, N0>, N0>);
-        static_assert(std::is_same_v<PeanoAbsDiff<N1, N1>, N0>);
-        static_assert(std::is_same_v<PeanoAbsDiff<N0, N8>, N8>);
-        static_assert(std::is_same_v<PeanoAbsDiff<N8, N0>, N8>);
-        static_assert(std::is_same_v<PeanoAbsDiff<N3, N7>, N4>);
+        static_assert(IsSameType<PeanoAbsDiff<N0, N0>, N0>);
+        static_assert(IsSameType<PeanoAbsDiff<N1, N1>, N0>);
+        static_assert(IsSameType<PeanoAbsDiff<N0, N8>, N8>);
+        static_assert(IsSameType<PeanoAbsDiff<N8, N0>, N8>);
+        static_assert(IsSameType<PeanoAbsDiff<N3, N7>, N4>);
     }
     namespace functional {
-        static_assert(std::is_same_v<Apply<S, N0>, N1>);
-        static_assert(std::is_same_v<Apply<Not, False>, True>);
+        static_assert(IsSameType<Apply<S, N0>, N1>);
+        static_assert(IsSameType<Apply<Not, False>, True>);
 
         using LTF = Cons<True, Cons<False, Nil>>;
         using LFT = Cons<False, Cons<True, Nil>>;
-        static_assert(std::is_same_v<Map<Not, LTF>, LFT>);
+        static_assert(IsSameType<Map<Not, LTF>, LFT>);
         
         using LEven = Cons<N0, Cons<N2, Cons<N4, Cons<N6, Nil>>>>;
         using LOdd = Cons<N1, Cons<N3, Cons<N5, Cons<N7, Nil>>>>;
-        static_assert(std::is_same_v<Map<S, LEven>, LOdd>);
+        static_assert(IsSameType<Map<S, LEven>, LOdd>);
 
         template <typename A>
         using PrependOne = Cons<N1, Cons<A, Nil>>;
-        static_assert(std::is_same_v<MapCat<PrependOne, LTF>,
+        static_assert(IsSameType<MapCat<PrependOne, LTF>,
                                      Cons<N1, Cons<True, Cons<N1, Cons<False, Nil>>>>>);
 
         using LNums = Cons<N0, Cons<N1, Cons<N2, Cons<N3, Cons<N4, Nil>>>>>;
         using LNumsBelowThree = Cons<N0, Cons<N1, Cons<N2, Nil>>>;
         template <typename A>
         using LessThanThree = PeanoLT<A, N3>;
-        static_assert(std::is_same_v<Filter<LessThanThree, LNums>, LNumsBelowThree>);
+        static_assert(IsSameType<Filter<LessThanThree, LNums>, LNumsBelowThree>);
         
         using LB = Cons<B, Nil>;
         using LAB = Cons<A, LB>;
-        static_assert(std::is_same_v<AppendIf<True, A, LB>, LAB>);
-        static_assert(std::is_same_v<AppendIf<False, A, LB>, LB>);
+        static_assert(IsSameType<AppendIf<True, A, LB>, LAB>);
+        static_assert(IsSameType<AppendIf<False, A, LB>, LB>);
     }
     namespace queens {
-        static_assert(std::is_same_v<QueensInRow<N2, N7>, Cons<Queen<N7, N1>, Cons<Queen<N7, N0>, Nil>>>);
+        static_assert(IsSameType<QueensInRow<N2, N7>, Cons<Queen<N7, N1>, Cons<Queen<N7, N0>, Nil>>>);
 
-        static_assert(std::is_same_v<Threatens<Queen<N0, N0>, Queen<N0, N1>>, True>);
-        static_assert(std::is_same_v<Threatens<Queen<N0, N0>, Queen<N4, N0>>, True>);
-        static_assert(std::is_same_v<Threatens<Queen<N0, N0>, Queen<N3, N3>>, True>);
-        static_assert(std::is_same_v<Threatens<Queen<N0, N0>, Queen<N3, N5>>, False>);
-        static_assert(std::is_same_v<Threatens<Queen<N0, N0>, Queen<N1, N2>>, False>);
+        static_assert(IsSameType<Threatens<Queen<N0, N0>, Queen<N0, N1>>, True>);
+        static_assert(IsSameType<Threatens<Queen<N0, N0>, Queen<N4, N0>>, True>);
+        static_assert(IsSameType<Threatens<Queen<N0, N0>, Queen<N3, N3>>, True>);
+        static_assert(IsSameType<Threatens<Queen<N0, N0>, Queen<N3, N5>>, False>);
+        static_assert(IsSameType<Threatens<Queen<N0, N0>, Queen<N1, N2>>, False>);
 
         using SmallConfig = Cons<Queen<N0, N0>, Cons<Queen<N1, N2>, Nil>>;
-        static_assert(std::is_same_v<Safe<SmallConfig, Queen<N1, N1>>, False>);
-        static_assert(std::is_same_v<Safe<SmallConfig, Queen<N2, N2>>, False>);
-        static_assert(std::is_same_v<Safe<SmallConfig, Queen<N3, N1>>, True>);
-        static_assert(std::is_same_v<Safe<SmallConfig, Queen<N2, N4>>, True>);
+        static_assert(IsSameType<Safe<SmallConfig, Queen<N1, N1>>, False>);
+        static_assert(IsSameType<Safe<SmallConfig, Queen<N2, N2>>, False>);
+        static_assert(IsSameType<Safe<SmallConfig, Queen<N3, N1>>, True>);
+        static_assert(IsSameType<Safe<SmallConfig, Queen<N2, N4>>, True>);
 
-        static_assert(std::is_same_v<AddQueen<N1, N0, Nil>,
+        static_assert(IsSameType<AddQueen<N1, N0, Nil>,
                                      Cons<Cons<Queen<N0, N0>, Nil>, Nil>>);
-        static_assert(std::is_same_v<AddQueen<N1, N0, Cons<Queen<N0, N0>, Nil>>, Nil>);
-        static_assert(std::is_same_v<AddQueen<N3, N0, SmallConfig>, Nil>);
-        static_assert(std::is_same_v<AddQueen<N3, N1, SmallConfig>, Nil>);
-        static_assert(std::is_same_v<AddQueen<N3, N2, SmallConfig>, Nil>);
-        static_assert(std::is_same_v<AddQueen<N3, N3, SmallConfig>,
+        static_assert(IsSameType<AddQueen<N1, N0, Cons<Queen<N0, N0>, Nil>>, Nil>);
+        static_assert(IsSameType<AddQueen<N3, N0, SmallConfig>, Nil>);
+        static_assert(IsSameType<AddQueen<N3, N1, SmallConfig>, Nil>);
+        static_assert(IsSameType<AddQueen<N3, N2, SmallConfig>, Nil>);
+        static_assert(IsSameType<AddQueen<N3, N3, SmallConfig>,
                                      Cons<Cons<Queen<N3, N1>, SmallConfig>, Nil>>);
         
-        static_assert(std::is_same_v<AddQueenToAll<N4, N1, Cons<Nil, Nil>>,
+        static_assert(IsSameType<AddQueenToAll<N4, N1, Cons<Nil, Nil>>,
                                      Cons<Cons<Queen<N1, N3>, Nil>,
                                      Cons<Cons<Queen<N1, N2>, Nil>,
                                      Cons<Cons<Queen<N1, N1>, Nil>,
                                      Cons<Cons<Queen<N1, N0>, Nil>, Nil>>>>>);
-        static_assert(std::is_same_v<AddQueenToAll<N4, N2, Cons<SmallConfig, Nil>>, Nil>);
-        static_assert(std::is_same_v<AddQueenToAll<N4, N3, Cons<SmallConfig, Nil>>,
+        static_assert(IsSameType<AddQueenToAll<N4, N2, Cons<SmallConfig, Nil>>, Nil>);
+        static_assert(IsSameType<AddQueenToAll<N4, N3, Cons<SmallConfig, Nil>>,
                                      Cons<Cons<Queen<N3, N1>, SmallConfig>, Nil>>);
         using OtherConfig = Cons<Queen<N0, N2>, Cons<Queen<N1, N0>, Nil>>; 
-        static_assert(std::is_same_v<AddQueenToAll<N4, N3, Cons<OtherConfig, Cons<SmallConfig, Nil>>>,
+        static_assert(IsSameType<AddQueenToAll<N4, N3, Cons<OtherConfig, Cons<SmallConfig, Nil>>>,
                                      Cons<Cons<Queen<N3, N3>, OtherConfig>,
                                      Cons<Cons<Queen<N3, N1>, OtherConfig>, 
                                      Cons<Cons<Queen<N3, N1>, SmallConfig>, Nil>>>>);
 
-        static_assert(std::is_same_v<AddQueens<N1, N0, Cons<Nil, Nil>>, 
+        static_assert(IsSameType<AddQueens<N1, N0, Cons<Nil, Nil>>, 
                                      Cons<Cons<Queen<N0, N0>, Nil>, Nil>>);
     }
 }
