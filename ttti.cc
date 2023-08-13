@@ -1,21 +1,5 @@
 // Following the excellent post by Kyle Kingsbury:
 // https://aphyr.com/posts/342-typing-the-technical-interview
-//
-// Build to run compile-time unit tests:
-// $ clang++ --std=c++17 -c ttti.c
-// 
-// Solve for N <= 8 with:
-// $ clang++ --std=c++17 -c ttti.c -DNQUEENS=N6
-// This will fail on assertion error and print the type of Solution<N>
-// which encodes the board as a list of queen positions.
-//
-// For "graphical" rendering try this shitty bash thing:
-// $ clang++ --std=c++17 -c ttti.cc -DNQUEENS=N6 2>&1 | \
-//   grep 'static_assert failed' | \
-//   sed -E 's/.*is_same_v<(.+), Nil>.*/\1/' | \
-//   sed 's/, Cons/\n/g' | \
-//   sed -E 's/.*, ([S<]*)Z.*/\1#/g' | \
-//   tr -d 'S' | tr '<' ' '
 
 struct Nil;
 
