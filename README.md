@@ -35,4 +35,4 @@ Surprisingly not too bad. On my machine N=7 takes around a second and N=8 takes 
 
 ## License
 
-It is not clear what is the license of Kyle Kingsbury's original post is, and this code should is probably derivative work, so I'm not claiming any rights over it and don't provide a license.
+It is not clear what the license of Kyle Kingsbury's original post is, and this code probably is derivative work, so I'm not claiming any rights over it and don't provide a license.
